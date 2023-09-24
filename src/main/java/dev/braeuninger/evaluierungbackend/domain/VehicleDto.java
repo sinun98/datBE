@@ -6,10 +6,11 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
-
+/**
+ * A DTO representing information about a vehicle.
+ */
 @Data
 @NoArgsConstructor
-@AllArgsConstructor
 public class VehicleDto {
     private Long id;
     private String vehicleType;

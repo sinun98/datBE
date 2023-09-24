@@ -16,6 +16,9 @@ import java.util.stream.Collectors;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
+/**
+ * Controller class for managing vehicles.
+ */
 @Slf4j
 @RestController
 @RequestMapping("api/v1/vehicles")
@@ -24,45 +27,58 @@ public class VehicleController {
 
     private final VehicleService vehicleService;
 
+    /**
+     * Get a list of all vehicles.
+     *
+     * @return ResponseEntity containing a collection of vehicle resources with links.
+     */
     @CrossOrigin(origins = "http://localhost:8023")
     @GetMapping
-    public ResponseEntity<CollectionModel<EntityModel<VehicleDto>>> getVehicles(){
+    public ResponseEntity<CollectionModel<EntityModel<VehicleDto>>> getVehicles() {
         log.info("Get-Request to api/v1/vehicles");
 
         List<VehicleDto> allVehicles = vehicleService.getAllVehicles();
 
-        List<EntityModel<VehicleDto>> productResources = allVehicles.stream()
-                .map(this::addLinksToProduct)
+        List<EntityModel<VehicleDto>> vehicleResources = allVehicles.stream()
+                .map(this::addLinksToVehicle)
                 .collect(Collectors.toList());
 
-        CollectionModel<EntityModel<VehicleDto>> response = CollectionModel.of(productResources);
-
-        return ResponseEntity.ok(response);
-
+        return ResponseEntity.ok(CollectionModel.of(vehicleResources));
     }
 
-    private EntityModel<VehicleDto> addLinksToProduct(VehicleDto product) {
-        Link selfLink = WebMvcLinkBuilder.linkTo(methodOn(this.getClass()).deleteVehicle(product.getId()))
-                .withRel("delete");
-
-        return EntityModel.of(product, selfLink);
-    }
-
+    /**
+     * Delete a vehicle by its ID.
+     *
+     * @param id The ID of the vehicle to delete.
+     * @return ResponseEntity indicating the success or failure of the deletion.
+     */
     @CrossOrigin(origins = "http://localhost:8023")
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void>  deleteVehicle(@PathVariable Long id){
+    public ResponseEntity<Void> deleteVehicle(@PathVariable Long id) {
         ResponseEntity<Void> result;
         log.info(String.format("Delete-Request to api/v1/vehicles/%d ", id));
         if (vehicleService.getVehicleById(id) != null) {
             vehicleService.deleteVehicle(id);
-            log.info(String.format("Vehicle with id %d deleted successfully", id));
+            log.info(String.format("Vehicle with ID %d deleted successfully", id));
             result = ResponseEntity.noContent()
                     .build();
         } else {
-            result =  ResponseEntity.notFound()
+            result = ResponseEntity.notFound()
                     .build();
         }
         return result;
+    }
 
+    /**
+     * Add self link to a vehicle resource.
+     *
+     * @param vehicle The vehicle DTO to add a self link to.
+     * @return EntityModel of the vehicle with a self link.
+     */
+    private EntityModel<VehicleDto> addLinksToVehicle(VehicleDto vehicle) {
+        Link selfLink = WebMvcLinkBuilder.linkTo(methodOn(this.getClass()).deleteVehicle(vehicle.getId()))
+                .withRel("delete");
+
+        return EntityModel.of(vehicle, selfLink);
     }
 }

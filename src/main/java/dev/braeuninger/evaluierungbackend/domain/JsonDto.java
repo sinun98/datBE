@@ -1,18 +1,19 @@
 package dev.braeuninger.evaluierungbackend.domain;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDate;
 import java.util.List;
 
+/**
+ * A DTO representing a JSON structure containing a list of vehicles.
+ */
 @Data
 @NoArgsConstructor
-@AllArgsConstructor
 public class JsonDto {
 
+    /**
+     * The list of vehicles contained in the JSON structure.
+     */
     private List<VehicleDto> vehicles;
-
-
 }

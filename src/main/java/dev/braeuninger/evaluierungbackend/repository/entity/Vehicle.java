@@ -10,7 +10,9 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import java.time.LocalDate;
 
-
+/**
+ * Entity class representing information about a vehicle stored in the database.
+ */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
